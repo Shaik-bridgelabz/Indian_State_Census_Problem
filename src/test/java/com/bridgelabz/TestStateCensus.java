@@ -88,4 +88,16 @@ public class TestStateCensus {
         }
     }
 
+    @Test
+    public void givenStateCode_WhenImproperDelimiter_Should_ReturnException() throws StateCensusException {
+        StateCodeAnalyser stateCodeAnalyser = new StateCodeAnalyser(CSV_STATES_CODE_FILE_PATH);
+        try
+        {
+            stateCodeAnalyser.loadStateCodeData();
+        }
+        catch (StateCensusException e)
+        {
+            Assert.assertEquals(StateCensusException.TypeOfException.INCORRECT_DELIMITER_EXCEPTION,e.type);
+        }
+    }
 }
