@@ -38,4 +38,17 @@ public class TestStateCensus {
             Assert.assertEquals(StateCensusException.TypeOfException.NO_FILE_FOUND,e.type);
         }
     }
+
+    @Test
+    public void givenStateCensusDataFile_WhenImproperDelimiter_ReturnsException() throws StateCensusException
+    {
+        try
+        {
+            StateCensusAnalyser censusAnalyserObject = new StateCensusAnalyser(CSV_FILE_PATH);
+            censusAnalyserObject.loadData();
+        }
+        catch (StateCensusException e) {
+            Assert.assertEquals(StateCensusException.TypeOfException.INCORRECT_DELIMITER_EXCEPTION,e.type);
+        }
+    }
 }

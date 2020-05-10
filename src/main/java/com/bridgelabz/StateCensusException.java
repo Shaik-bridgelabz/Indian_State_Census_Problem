@@ -3,7 +3,7 @@ package com.bridgelabz;
 public class StateCensusException extends Throwable {
 
     public enum TypeOfException {
-        NO_FILE_FOUND
+        NO_FILE_FOUND,INCORRECT_DELIMITER_EXCEPTION;
     }
 
     public TypeOfException type;

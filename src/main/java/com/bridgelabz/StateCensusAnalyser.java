@@ -39,6 +39,9 @@ public class StateCensusAnalyser {
         } catch (IOException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND,"File Not Found in Path");
         }
+        catch (RuntimeException e) {
+            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_EXCEPTION,"Delimiters used are not proper");
+        }
         return totalNumberOfRecords;
     }
 }
