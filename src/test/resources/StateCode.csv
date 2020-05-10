@@ -1,7 +1,7 @@
-SrNo,StateName,TIN,StateCode,
-1--AndamanandNicobarIslands,35,AN
-2~AndhraPradesh,28,AP
-3,AndhraPradeshNew,37+AD
+SrNoStateName-StateCode,
+1,AndamanandNicobarIslands,35,AN
+2,AndhraPradesh,28,AP
+3,AndhraPradeshNew,37,AD
 4,ArunachalPradesh,12,AR
 5,Assam,18,AS
 6,Bihar,10,BH

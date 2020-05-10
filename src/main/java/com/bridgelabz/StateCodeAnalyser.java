@@ -37,7 +37,7 @@ public class StateCodeAnalyser {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND, "No Such File Present");
         }
         catch (RuntimeException e) {
-            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_EXCEPTION,"Delimiters used in file are Incorrect");
+            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION,"Header is improper in file.");
         }
         return totalNumberOfRecords;
     }
