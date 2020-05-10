@@ -77,6 +77,16 @@ public class TestStateCensus {
     }
 
     @Test
+    public void givenStateCodeFile_WhenImproperFileExtension_ReturnsException() throws StateCensusException {
+        try {
+            stateCensusAnalyser.loadIndianStateCodeData(CSV_FILE_PATH_FOR_WRONG_FILE_EXTENSION);
+        }
+        catch (StateCensusException e) {
+            Assert.assertEquals(StateCensusException.TypeOfException.NO_FILE_FOUND,e.type);
+        }
+    }
+
+    @Test
     public void givenStateCode_WhenImproperDelimiter_Should_ReturnException() throws StateCensusException {
         try {
             stateCensusAnalyser.loadIndianStateCodeData(CSV_STATES_CODE_FILE_PATH);
