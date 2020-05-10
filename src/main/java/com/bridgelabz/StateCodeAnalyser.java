@@ -5,6 +5,7 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.Iterator;
 import static java.nio.file.Files.newBufferedReader;
@@ -33,11 +34,14 @@ public class StateCodeAnalyser {
                 System.out.println("StateCode :" + csvStateCode.getStateCode());
                 totalNumberOfRecords++;
             }
-        } catch (IOException e) {
+        } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND, "No Such File Present");
         }
         catch (RuntimeException e) {
-            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION,"Header is improper in file.");
+            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION,"Header or Delimiter is improper in file.");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
         return totalNumberOfRecords;
     }

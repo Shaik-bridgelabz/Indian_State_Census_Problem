@@ -3,6 +3,18 @@ package com.bridgelabz;
 import com.opencsv.bean.CsvBindByName;
 
 public class CSVStateCensus {
+
+    public  CSVStateCensus(){
+
+    }
+    //Parameterised Constructor
+    public CSVStateCensus(String state, String population, String areaInSqKm, String densityPerSqKm) {
+        this.state = state;
+        this.population = population;
+        AreaInSqKm = areaInSqKm;
+        DensityPerSqKm = densityPerSqKm;
+    }
+
     @CsvBindByName(column = "State",required = true)
     private String state;
 

@@ -4,45 +4,65 @@ import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.stream.StreamSupport;
 
 import static java.nio.file.Files.newBufferedReader;
 
-public class StateCensusAnalyser {
+public class StateCensusAnalyser <E> {
 
-    public static String CSV_FILE_PATH = "./src/test/resources/StateCensusData.csv";
+    public int readFile(String filepath) throws StateCensusException {
+        int totalNumberOfRecords=0;
+        try (Reader reader = newBufferedReader(Paths.get(filepath));) {
+            Iterator<CSVStateCensus> stateCSVIterator = this.getCSVfileIterator(reader, CSVStateCensus.class);
+            Iterable<CSVStateCensus> csvIterable = ()->stateCSVIterator;
+            int numOfRecords = (int) StreamSupport.stream(csvIterable.spliterator(), false).count();
 
-    public StateCensusAnalyser(String path) {
-        CSV_FILE_PATH = path;
-    }
+            return numOfRecords;
 
-    int totalNumberOfRecords=0;
-
-    public int loadData() throws StateCensusException {
-        try (Reader reader = newBufferedReader(Paths.get(CSV_FILE_PATH));)
-        {
-            CsvToBean<CSVStateCensus> csvStateCensusBeanObj = new CsvToBeanBuilder(reader)
-                    .withType(CSVStateCensus.class)
-                    .withIgnoreLeadingWhiteSpace(true)
-                    .build();
-            Iterator<CSVStateCensus> stateCensusCSVIterator = csvStateCensusBeanObj.iterator();
-            while (stateCensusCSVIterator.hasNext())
-            {
-                CSVStateCensus stateCensusCSV = stateCensusCSVIterator.next();
-                System.out.println("State: " +stateCensusCSV.getState());
-                System.out.println("Population: " +stateCensusCSV.getPopulation());
-                System.out.println("Area: " +stateCensusCSV.getAreaInSqKm());
-                System.out.println("Density: " +stateCensusCSV.getDensityPerSqKm());
-                totalNumberOfRecords++;
-            }
-        } catch (IOException e) {
+        } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND,"File Not Found in Path");
         }
         catch (RuntimeException e) {
-            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION, "Header is not proper");
+            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION, "Header or Delimiter is not proper");
         }
-
+        catch (IOException e){
+            e.printStackTrace();
+        }
         return totalNumberOfRecords;
+    }
+    public Integer loadIndianStateCodeData (String csvFilePath) throws StateCensusException {
+        try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
+            Iterator<CSVStateCode> csvStateCodeIterator = this.getCSVfileIterator(reader, CSVStateCode.class);
+            Iterable<CSVStateCode> csvStateCodeIterable = () -> csvStateCodeIterator;
+            int countRecord = (int) StreamSupport.stream(csvStateCodeIterable.spliterator(),false).count();
+            return countRecord;
+        } catch (NoSuchFileException e) {
+            throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND, "File Not Found in Path");
+        } catch (RuntimeException e) {
+            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION, "Header or Delimiter is not proper");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return (null);
+    }
+
+    private < E > Iterator < E > getCSVfileIterator(Reader reader, Class < E > csvClass) throws StateCensusException {
+        try {
+            CsvToBeanBuilder<E> csvToBeanBuilder = new CsvToBeanBuilder<E>(reader);
+            csvToBeanBuilder.withType(csvClass);
+            csvToBeanBuilder.withIgnoreLeadingWhiteSpace(true);
+            CsvToBean<E> csvToBean = csvToBeanBuilder.build();
+            return csvToBean.iterator();
+        } catch (RuntimeException e) {
+            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION, "Header or delimiter not proper.");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
