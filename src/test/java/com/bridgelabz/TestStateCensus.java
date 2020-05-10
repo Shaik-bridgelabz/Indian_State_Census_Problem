@@ -9,6 +9,7 @@ public class TestStateCensus {
     public static String CSV_FILE_PATH = "./src/test/resources/StateCensusData.csv";
     public static String CSV_FILE_PATH_FOR_WRONG_FILE = "./src/test/resources/StateCensus.csv";
     public static String CSV_FILE_PATH_FOR_WRONG_FILE_EXTENSION = "./src/test/resources/StateCensus.jpg";
+    public static String CSV_STATES_CODE_FILE_PATH = "./src/test/resources/StateCode.csv";
 
     @Test
     public void givenStateCensusCSV_WhenConditionTrue_ReturnNumberOfRecordMatch() throws StateCensusException {
@@ -63,5 +64,12 @@ public class TestStateCensus {
         catch (StateCensusException e) {
             Assert.assertEquals(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION,e.type);
         }
+    }
+
+    @Test
+    public void givenStateCode_WhenTrue_ReturnNumberOfRecordMatch() throws IOException {
+        StateCodeAnalyser stateCodeAnalyser = new StateCodeAnalyser(CSV_STATES_CODE_FILE_PATH);
+        int noOfRecords=stateCodeAnalyser.loadStateCodeData();
+        Assert.assertEquals(37, noOfRecords);
     }
 }
