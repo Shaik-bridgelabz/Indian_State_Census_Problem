@@ -17,7 +17,7 @@ public class CensusAnalyser<E> {
     public int loadIndianStateCensusData(String filepath) throws StateCensusException {
         int totalNumberOfRecords=0;
         try (Reader reader = newBufferedReader(Paths.get(filepath));) {
-            Iterator<CSVStateCensus> stateCSVIterator = this.getCSVfileIterator(reader, CSVStateCensus.class);
+            Iterator<CSVStateCensus> stateCSVIterator = new OpenCSVBuilder().getCSVfileIterator(reader, CSVStateCensus.class);
             return getCount(stateCSVIterator);
         } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND,"File Not Found in Path");
@@ -32,7 +32,7 @@ public class CensusAnalyser<E> {
     }
     public Integer loadIndianStateCodeData (String csvFilePath) throws StateCensusException {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
-            Iterator<CSVStateCode> csvStateCodeIterator = this.getCSVfileIterator(reader, CSVStateCode.class);
+            Iterator<CSVStateCode> csvStateCodeIterator = new OpenCSVBuilder().getCSVfileIterator(reader, CSVStateCode.class);
             return getCount(csvStateCodeIterator);
         } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND, "File Not Found in Path");
@@ -42,22 +42,6 @@ public class CensusAnalyser<E> {
             e.printStackTrace();
         }
         return (null);
-    }
-
-    private < E > Iterator < E > getCSVfileIterator(Reader reader, Class < E > csvClass) throws StateCensusException {
-        try {
-            CsvToBeanBuilder<E> csvToBeanBuilder = new CsvToBeanBuilder<E>(reader);
-            csvToBeanBuilder.withType(csvClass);
-            csvToBeanBuilder.withIgnoreLeadingWhiteSpace(true);
-            CsvToBean<E> csvToBean = csvToBeanBuilder.build();
-            return csvToBean.iterator();
-        } catch (RuntimeException e) {
-            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION, "Header or delimiter not proper.");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     private <E> int getCount(Iterator<E> iterator) {
