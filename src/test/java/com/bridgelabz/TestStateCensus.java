@@ -1,7 +1,10 @@
 package com.bridgelabz;
 
+import com.google.gson.Gson;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.lang.reflect.Type;
 
 public class TestStateCensus {
 
@@ -104,6 +107,19 @@ public class TestStateCensus {
         catch (StateCensusException e)
         {
             Assert.assertEquals(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION,e.type);
+        }
+    }
+
+    @Test
+    public void givenIndianCensusData_WhenSortedOnState_ShouldReturnSortedResult() {
+
+        try {
+            censusAnalyser.loadIndianStateCensusData(CSV_FILE_PATH);
+        String sortedCensusData = censusAnalyser.getStateWiseSortedCensusData();
+        CSVStateCensus[] censusCSV = new Gson().fromJson(sortedCensusData,CSVStateCensus[].class);
+        Assert.assertEquals("Andhra Pradesh",censusCSV[0].getState());
+        } catch (StateCensusException e) {
+            e.printStackTrace();
         }
     }
 }
