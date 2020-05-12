@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.StreamSupport;
 
 import static java.nio.file.Files.newBufferedReader;
@@ -18,8 +19,8 @@ public class CensusAnalyser<E> {
         int totalNumberOfRecords=0;
         try (Reader reader = newBufferedReader(Paths.get(filepath));) {
             ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
-            Iterator<CSVStateCensus> stateCSVIterator = csvBuilder.getCSVfileIterator(reader, CSVStateCensus.class);
-            return getCount(stateCSVIterator);
+            List<CSVStateCensus> censusCSVList = csvBuilder.getCSVfileList(reader,CSVStateCensus.class);
+            return censusCSVList.size();
         } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND,"File Not Found in Path");
         }
@@ -38,8 +39,8 @@ public class CensusAnalyser<E> {
     public Integer loadIndianStateCodeData (String csvFilePath) throws StateCensusException {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
             ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
-            Iterator<CSVStateCode> csvStateCodeIterator = csvBuilder.getCSVfileIterator(reader, CSVStateCode.class);
-            return getCount(csvStateCodeIterator);
+            List<CSVStateCode> codeCSVList = csvBuilder.getCSVfileList(reader,CSVStateCode.class);
+            return codeCSVList.size();
         } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND, "File Not Found in Path");
         } catch (RuntimeException e) {
