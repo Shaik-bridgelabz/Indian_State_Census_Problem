@@ -17,7 +17,8 @@ public class CensusAnalyser<E> {
     public int loadIndianStateCensusData(String filepath) throws StateCensusException {
         int totalNumberOfRecords=0;
         try (Reader reader = newBufferedReader(Paths.get(filepath));) {
-            Iterator<CSVStateCensus> stateCSVIterator = new OpenCSVBuilder().getCSVfileIterator(reader, CSVStateCensus.class);
+            ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
+            Iterator<CSVStateCensus> stateCSVIterator = csvBuilder.getCSVfileIterator(reader, CSVStateCensus.class);
             return getCount(stateCSVIterator);
         } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND,"File Not Found in Path");
@@ -30,9 +31,11 @@ public class CensusAnalyser<E> {
         }
         return totalNumberOfRecords;
     }
+
     public Integer loadIndianStateCodeData (String csvFilePath) throws StateCensusException {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
-            Iterator<CSVStateCode> csvStateCodeIterator = new OpenCSVBuilder().getCSVfileIterator(reader, CSVStateCode.class);
+            ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
+            Iterator<CSVStateCode> csvStateCodeIterator = csvBuilder.getCSVfileIterator(reader, CSVStateCode.class);
             return getCount(csvStateCodeIterator);
         } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND, "File Not Found in Path");
