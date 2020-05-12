@@ -14,4 +14,10 @@ public class StateCensusException extends Throwable {
         super(message);
         this.type=type;
     }
+
+    public StateCensusException(String message,String name) {
+        super(message);
+        this.type=TypeOfException.valueOf(name);
+    }
+
 }

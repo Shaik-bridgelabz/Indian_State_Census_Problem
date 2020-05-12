@@ -7,7 +7,7 @@ import java.io.Reader;
 import java.util.Iterator;
 
 public class OpenCSVBuilder <E> implements ICSVBuilder {
-    public Iterator <E>  getCSVfileIterator(Reader reader, Class csvClass) throws StateCensusException {
+    public Iterator <E>  getCSVfileIterator(Reader reader, Class csvClass) throws CSVBuilderException {
         try {
             CsvToBeanBuilder<E> csvToBeanBuilder = new CsvToBeanBuilder<E>(reader);
             csvToBeanBuilder.withType(csvClass);
@@ -15,7 +15,7 @@ public class OpenCSVBuilder <E> implements ICSVBuilder {
             CsvToBean<E> csvToBean = csvToBeanBuilder.build();
             return csvToBean.iterator();
         } catch (RuntimeException e) {
-            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION, "Header or delimiter not proper.");
+            throw new CSVBuilderException("Header or delimiter not proper.", CSVBuilderException.ExceptionType.CENSUS_FILE_PROBLEM);
         } catch (Exception e) {
             e.printStackTrace();
         }

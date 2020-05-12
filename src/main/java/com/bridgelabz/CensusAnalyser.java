@@ -29,6 +29,9 @@ public class CensusAnalyser<E> {
         catch (IOException e){
             e.printStackTrace();
         }
+        catch (CSVBuilderException e) {
+            throw new StateCensusException(e.getMessage(),e.type.name());
+        }
         return totalNumberOfRecords;
     }
 
@@ -44,6 +47,9 @@ public class CensusAnalyser<E> {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        catch (CSVBuilderException e) {
+        throw new StateCensusException(e.getMessage(),e.type.name());
+    }
         return (null);
     }
 
