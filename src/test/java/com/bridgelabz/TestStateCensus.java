@@ -115,7 +115,7 @@ public class TestStateCensus {
             censusAnalyser.loadIndianStateCensusData(CSV_CENSUS_FILE_PATH);
             String sortedCensusData = censusAnalyser.getStateWiseSortedCensusData();
             CSVStateCensus[] censusCSV = new Gson().fromJson(sortedCensusData,CSVStateCensus[].class);
-            Assert.assertEquals("Andhra Pradesh",censusCSV[0].getState());
+            Assert.assertEquals("Andhra Pradesh",censusCSV[0].state);
         } catch (StateCensusException e) {
             e.printStackTrace();
         }
@@ -142,6 +142,32 @@ public class TestStateCensus {
             String sortedStateCodeDataData = censusAnalyser.getStateCodeWiseSortedStateCodeData();
             CSVStateCode[] codeCSV = new Gson().fromJson(sortedStateCodeDataData,CSVStateCode[].class);
             Assert.assertEquals("WB",codeCSV[36].StateCode);
+        } catch (StateCensusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void givenIndianCensusData_WhenSortedOnPopulation_ShouldReturnSortedResult() {
+        String sortedCensusData = null;
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            sortedCensusData = censusAnalyser.getPopulationWiseSortedCensusData(CSV_CENSUS_FILE_PATH);
+            CSVStateCensus[] censusCSV = new Gson().fromJson(sortedCensusData, CSVStateCensus[].class);
+            Assert.assertEquals(199812341,censusCSV[censusCSV.length - 1].population);
+        } catch (StateCensusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void givenIndianCensusData_WhenSortedOnPopulation_ShouldReturn_NumberOfStatesSortedResult() {
+        String sortedCensusData = null;
+        try {
+            CensusAnalyser censusAnalyser = new CensusAnalyser();
+            sortedCensusData = censusAnalyser.getPopulationWiseSortedCensusData(CSV_CENSUS_FILE_PATH);
+            CSVStateCensus[] censusCSV = new Gson().fromJson(sortedCensusData, CSVStateCensus[].class);
+            Assert.assertEquals(30,censusCSV.length+1);
         } catch (StateCensusException e) {
             e.printStackTrace();
         }

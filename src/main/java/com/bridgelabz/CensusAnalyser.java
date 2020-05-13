@@ -20,8 +20,6 @@ public class CensusAnalyser<E> {
     Map <String, CSVStateCensus> StateCensusCSVMap = null;
     Map <String, CSVStateCode> StateCodeCSVMap = null;
 
-    OpenCSVBuilder openCSVBuilder=new OpenCSVBuilder();
-
     public CensusAnalyser() {
         this.StateCensusCSVMap=new HashMap<>();
         this.StateCodeCSVMap=new HashMap<>();
@@ -115,6 +113,17 @@ public class CensusAnalyser<E> {
                 }
             }
         }
+    }
+
+    public String getPopulationWiseSortedCensusData(String csvFilePath) throws StateCensusException {
+        loadIndianStateCensusData(csvFilePath);
+        if (censusList == null || censusList.size() == 0) {
+            throw new StateCensusException(StateCensusException.TypeOfException.NO_CENSUS_DATA, "NO_CENSUS_DATA");
+        }
+        Comparator<CSVStateCensus> censusComparator = Comparator.comparing(census -> census.population);
+        this.sortCensusData(censusComparator);
+        String sortedStateCensusJson = new Gson().toJson(this.censusList);
+        return sortedStateCensusJson;
     }
 
 }

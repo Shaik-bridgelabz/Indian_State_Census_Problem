@@ -4,66 +4,25 @@ import com.opencsv.bean.CsvBindByName;
 
 public class CSVStateCensus {
 
-    public  CSVStateCensus(){
-
-    }
-    //Parameterised Constructor
-    public CSVStateCensus(String state, String population, String areaInSqKm, String densityPerSqKm) {
-        this.state = state;
-        this.population = population;
-        AreaInSqKm = areaInSqKm;
-        DensityPerSqKm = densityPerSqKm;
-    }
-
-    @CsvBindByName(column = "State",required = true)
+    @CsvBindByName(column = "State", required = true)
     public String state;
 
-    @CsvBindByName(column = "Population",required = true)
-    public String population;
+    @CsvBindByName(column = "Population", required = true)
+    public int population;
 
-    @CsvBindByName(column = "AreaInSqKm",required = true)
-    public String AreaInSqKm;
+    @CsvBindByName(column = "AreaInSqKm", required = true)
+    public int areaInSqKm;
 
-    @CsvBindByName(column = "DensityPerSqKm",required = true)
-    public String DensityPerSqKm;
+    @CsvBindByName(column = "DensityPerSqKm", required = true)
+    public int densityPerSqKm;
 
-    public String getState()
-    {
-        return state;
-    }
-
-    public void setState(String state)
-    {
-        this.state = state;
-    }
-
-    public String getPopulation()
-    {
-        return population;
-    }
-
-    public void setPopulation(String population)
-    {
-        this.population = population;
-    }
-
-    public String getAreaInSqKm()
-    {
-        return AreaInSqKm;
-    }
-
-    public void setAreaInSqKm(String areaInSqKm)
-    {
-        AreaInSqKm = areaInSqKm;
-    }
-
-    public String getDensityPerSqKm()
-    {
-        return DensityPerSqKm;
-    }
-
-    public void setDensityPerSqKm(String densityPerSqKm)
-    {
-        DensityPerSqKm = densityPerSqKm;
+    @Override
+    public String toString() {
+        return "IndiaCensusCSV{" +
+                "State='" + state + '\'' +
+                ", Population='" + population + '\'' +
+                ", AreaInSqKm='" + areaInSqKm + '\'' +
+                ", DensityPerSqKm='" + densityPerSqKm + '\'' +
+                '}';
     }
 }

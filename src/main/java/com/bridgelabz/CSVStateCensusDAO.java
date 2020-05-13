@@ -2,15 +2,15 @@ package com.bridgelabz;
 
 public class CSVStateCensusDAO {
 
-    public String population;
-    public String densityPerSqKm;
-    public String areaInSqKm;
+    public int population;
+    public int densityPerSqKm;
+    public int areaInSqKm;
     public String state;
 
     public CSVStateCensusDAO(CSVStateCensus indiaCensus) {
         state=indiaCensus.state;
-        areaInSqKm=indiaCensus.AreaInSqKm;
-        densityPerSqKm=indiaCensus.DensityPerSqKm;
+        areaInSqKm=indiaCensus.areaInSqKm;
+        densityPerSqKm=indiaCensus.densityPerSqKm;
         population= indiaCensus.population;
     }
 }
