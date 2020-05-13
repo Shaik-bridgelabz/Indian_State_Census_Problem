@@ -126,4 +126,14 @@ public class CensusAnalyser<E> {
         return sortedStateCensusJson;
     }
 
+    public String getDensityWiseSortedCensusData(String csvFilePath) throws StateCensusException {
+        loadIndianStateCensusData(csvFilePath);
+        if (censusList == null || censusList.size() == 0) {
+            throw new StateCensusException(StateCensusException.TypeOfException.NO_CENSUS_DATA, "NO_CENSUS_DATA");
+        }
+        Comparator<CSVStateCensus> censusComparator = Comparator.comparing(census -> census.densityPerSqKm);
+        this.sortCensusData(censusComparator);
+        String sortedStateCensusJson = new Gson().toJson(this.censusList);
+        return sortedStateCensusJson;
+    }
 }
