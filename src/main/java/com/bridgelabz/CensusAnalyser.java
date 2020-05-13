@@ -23,7 +23,7 @@ public class CensusAnalyser<E> {
     }
 
     public int loadIndianStateCensusData(String filepath) throws StateCensusException {
-        int totalNumberOfRecords=0;
+
         try (Reader reader = newBufferedReader(Paths.get(filepath));) {
             ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
             Iterator<CSVStateCensus> csvFileIterator = csvBuilder.getCSVfileIterator(reader,CSVStateCensus.class);
@@ -33,17 +33,13 @@ public class CensusAnalyser<E> {
             return censusList.size();
         } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND,"File Not Found in Path");
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION, "Header or Delimiter is not proper");
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-        catch (CSVBuilderException e) {
+        } catch (IOException e){
+            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_EXCEPTION,"File Not Proper");
+        } catch (CSVBuilderException e) {
             throw new StateCensusException(e.getMessage(),e.type.name());
         }
-        return totalNumberOfRecords;
     }
 
     public Integer loadIndianStateCodeData (String csvFilePath) throws StateCensusException {
@@ -55,19 +51,17 @@ public class CensusAnalyser<E> {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND, "File Not Found in Path");
         } catch (RuntimeException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION, "Header or Delimiter is not proper");
+        } catch (CSVBuilderException e) {
+            throw new StateCensusException(e.getMessage(),e.type.name());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_EXCEPTION,"File Not Proper");
         }
-        catch (CSVBuilderException e) {
-        throw new StateCensusException(e.getMessage(),e.type.name());
-    }
-        return (null);
     }
 
     private <E> int getCount(Iterator<E> iterator) {
-    Iterable<E> csvIterable = () -> iterator;
-    int numOfRecords = (int) StreamSupport.stream(csvIterable.spliterator(), false).count();
-    return numOfRecords;
+        Iterable<E> csvIterable = () -> iterator;
+        int numOfRecords = (int) StreamSupport.stream(csvIterable.spliterator(), false).count();
+        return numOfRecords;
     }
 
     public String getStateWiseSortedCensusData() throws StateCensusException {

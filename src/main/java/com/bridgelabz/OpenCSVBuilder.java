@@ -2,7 +2,6 @@ package com.bridgelabz;
 
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-
 import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
@@ -29,9 +28,8 @@ public class OpenCSVBuilder <E> implements ICSVBuilder {
         } catch (RuntimeException e) {
             throw new CSVBuilderException("Header or delimiter not proper.", CSVBuilderException.ExceptionType.CENSUS_FILE_PROBLEM);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new CSVBuilderException("File not proper",CSVBuilderException.ExceptionType.UNABLE_TO_PARSE);
         }
-        return null;
     }
 
 }
