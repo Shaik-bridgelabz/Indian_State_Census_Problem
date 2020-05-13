@@ -136,4 +136,15 @@ public class CensusAnalyser<E> {
         String sortedStateCensusJson = new Gson().toJson(this.censusList);
         return sortedStateCensusJson;
     }
+
+    public String getAreaWiseSortedCensusData(String csvFilePath) throws StateCensusException {
+        loadIndianStateCensusData(csvFilePath);
+        if (censusList == null || censusList.size() == 0) {
+            throw new StateCensusException(StateCensusException.TypeOfException.NO_CENSUS_DATA, "NO_CENSUS_DATA");
+        }
+        Comparator<CSVStateCensus> censusComparator = Comparator.comparing(census -> census.areaInSqKm);
+        this.sortCensusData(censusComparator);
+        String sortedStateCensusJson = new Gson().toJson(this.censusList);
+        return sortedStateCensusJson;
+    }
 }

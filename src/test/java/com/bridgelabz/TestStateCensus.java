@@ -191,4 +191,29 @@ public class TestStateCensus {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void givenIndianCensusData_WhenSortedOnDensity_ShouldReturn_LargestStateByArea() {
+        String sortedCensusData = null;
+        try {
+            sortedCensusData = censusAnalyser.getAreaWiseSortedCensusData(CSV_CENSUS_FILE_PATH);
+            CSVStateCensus[] censusCSV = new Gson().fromJson(sortedCensusData, CSVStateCensus[].class);
+            Assert.assertEquals("Rajasthan",censusCSV[censusCSV.length - 1].state);
+        } catch (StateCensusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void givenIndianCensusData_WhenSortedOnDensity_ShouldReturn_SmallestStateByArea() {
+        String sortedCensusData = null;
+        try {
+            sortedCensusData = censusAnalyser.getAreaWiseSortedCensusData(CSV_CENSUS_FILE_PATH);
+            CSVStateCensus[] censusCSV = new Gson().fromJson(sortedCensusData, CSVStateCensus[].class);
+            Assert.assertEquals("Goa",censusCSV[0].state);
+        } catch (StateCensusException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
