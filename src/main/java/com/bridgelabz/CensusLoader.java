@@ -13,7 +13,15 @@ import static java.nio.file.Files.newBufferedReader;
 
 public class CensusLoader {
 
-    public <E> Map<String, CensusDAO> loadCensusData(Class<E> CensusCsvClass, String... csvFilePath) throws StateCensusException {
+    public Map<String, CensusDAO> loadCensusData(CensusAnalyser.Country country, String... csvFilePath) throws StateCensusException {
+        if (country.equals(CensusAnalyser.Country.INDIA))
+            return this.loadCensusData(CSVStateCensus.class,csvFilePath);
+        else if (country.equals(CensusAnalyser.Country.US))
+                return this.loadCensusData(CSVUSCensus.class,csvFilePath);
+        else throw new StateCensusException(StateCensusException.TypeOfException.INVALID_COUNTRY,"Invalid Country");
+    }
+
+    private  <E> Map<String, CensusDAO> loadCensusData(Class<E> CensusCsvClass, String... csvFilePath) throws StateCensusException {
         Map<String,CensusDAO> csvFileMap = new HashMap<>();
         try (Reader reader = newBufferedReader(Paths.get(csvFilePath[0]));) {
             ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
@@ -42,7 +50,7 @@ public class CensusLoader {
         }
     }
 
-    public Integer loadIndianStateCodeData(Map<String, CensusDAO> csvFileMap, String csvFilePath) throws StateCensusException {
+    private Integer loadIndianStateCodeData(Map<String, CensusDAO> csvFileMap, String csvFilePath) throws StateCensusException {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
             ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
             Iterator<CSVStateCode> csvFileIterator = csvBuilder.getCSVfileIterator(reader,CSVStateCode.class);
@@ -61,4 +69,5 @@ public class CensusLoader {
             throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_EXCEPTION,"File Not Proper");
         }
     }
+
 }

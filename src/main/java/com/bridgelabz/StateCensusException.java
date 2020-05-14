@@ -6,7 +6,8 @@ public class StateCensusException extends Throwable {
         NO_FILE_FOUND,
         INCORRECT_DELIMITER_EXCEPTION,
         INCORRECT_DELIMITER_HEADER_EXCEPTION,
-        NO_CENSUS_DATA;
+        NO_CENSUS_DATA,
+        INVALID_COUNTRY;
     }
 
     public TypeOfException type;
