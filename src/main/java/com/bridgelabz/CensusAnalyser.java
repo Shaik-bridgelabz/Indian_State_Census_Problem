@@ -16,23 +16,32 @@ public class CensusAnalyser<E> {
 
     List<CSVStateCensus> censusList = null;
     List<CSVStateCode> codeCSVList=null;
-    List<CSVUSCensus> USCensusList=null;
 
     Map<String, CensusDAO> csvFileMap = null;
-    Map <String, CSVUSCensus> USCensusCSVMap = null;
 
     public CensusAnalyser() {
         this.csvFileMap =new HashMap<String, CensusDAO>();
-        this.USCensusCSVMap=new HashMap<>();
     }
 
-    public int loadIndianStateCensusData(String filepath) throws StateCensusException {
+    public int loadIndianStateCensusData(String filePath) throws StateCensusException {
+        return this.loadCensusData(filePath,CSVStateCensus.class);
+
+    }
+
+    private <E> int loadCensusData(String filepath, Class<E> CensusCsvClass) throws StateCensusException {
         try (Reader reader = newBufferedReader(Paths.get(filepath));) {
             ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
-            Iterator<CSVStateCensus> csvFileIterator = csvBuilder.getCSVfileIterator(reader,CSVStateCensus.class);
-            Iterable<CSVStateCensus> csvIterable = () -> csvFileIterator;
-            StreamSupport.stream(csvIterable.spliterator(), false)
-                    .forEach(censusCSV -> csvFileMap.put(censusCSV.state,new CensusDAO(censusCSV)));
+            Iterator<E> csvFileIterator = csvBuilder.getCSVfileIterator(reader,CensusCsvClass);
+            Iterable<E> csvIterable = () -> csvFileIterator;
+            if(CensusCsvClass.getName().equals("com.bridgelabz.CSVStateCensus")) {
+                StreamSupport.stream(csvIterable.spliterator(), false)
+                        .map(CSVStateCensus.class::cast)
+                        .forEach(censusCSV -> csvFileMap.put(censusCSV.state, new CensusDAO(censusCSV)));
+            } else if (CensusCsvClass.getName().equals("com.bridgelabz.CSVUSCensus")){
+                StreamSupport.stream(csvIterable.spliterator(), false)
+                        .map(CSVUSCensus.class::cast)
+                        .forEach(censusCSV -> csvFileMap.put(censusCSV.state, new CensusDAO(censusCSV)));
+            }
             return csvFileMap.size();
         } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND,"File Not Found in Path");
@@ -65,23 +74,8 @@ public class CensusAnalyser<E> {
         }
     }
 
-    public Integer loadUSCensusData (String csvFilePath) throws StateCensusException {
-        try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
-            ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
-            Iterator<CSVUSCensus> csvFileIterator = csvBuilder.getCSVfileIterator(reader,CSVUSCensus.class);
-            Iterable<CSVUSCensus> csvIterable = () -> csvFileIterator;
-            StreamSupport.stream(csvIterable.spliterator(), false)
-                    .forEach(UScensusCSV -> csvFileMap.put(UScensusCSV.state,new CensusDAO(UScensusCSV)));
-            return csvFileMap.size();
-        } catch (NoSuchFileException e) {
-            throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND, "File Not Found in Path");
-        } catch (RuntimeException e) {
-            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION, "Header or Delimiter is not proper");
-        } catch (CSVBuilderException e) {
-            throw new StateCensusException(e.getMessage(),e.type.name());
-        } catch (IOException e) {
-            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_EXCEPTION,"File Not Proper");
-        }
+    public int loadUSCensusData (String csvFilePath) throws StateCensusException {
+        return this.loadCensusData(csvFilePath,CSVUSCensus.class);
     }
 
     public String getStateWiseSortedCensusData() throws StateCensusException {
