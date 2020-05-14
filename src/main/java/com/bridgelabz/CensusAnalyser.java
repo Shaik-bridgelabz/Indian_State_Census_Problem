@@ -16,13 +16,16 @@ public class CensusAnalyser<E> {
 
     List<CSVStateCensus> censusList = null;
     List<CSVStateCode> codeCSVList=null;
+    List<CSVUSCensus> USCensusList=null;
 
     Map <String, CSVStateCensus> StateCensusCSVMap = null;
     Map <String, CSVStateCode> StateCodeCSVMap = null;
+    Map <String, CSVUSCensus> USCensusCSVMap = null;
 
     public CensusAnalyser() {
         this.StateCensusCSVMap=new HashMap<>();
         this.StateCodeCSVMap=new HashMap<>();
+        this.USCensusCSVMap=new HashMap<>();
     }
 
     public int loadIndianStateCensusData(String filepath) throws StateCensusException {
@@ -57,6 +60,28 @@ public class CensusAnalyser<E> {
                 codeCSVList=StateCodeCSVMap.values().stream().collect(Collectors.toList());
             }
             int numberOfRecords=StateCodeCSVMap.size();
+            return numberOfRecords;
+        } catch (NoSuchFileException e) {
+            throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND, "File Not Found in Path");
+        } catch (RuntimeException e) {
+            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION, "Header or Delimiter is not proper");
+        } catch (CSVBuilderException e) {
+            throw new StateCensusException(e.getMessage(),e.type.name());
+        } catch (IOException e) {
+            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_EXCEPTION,"File Not Proper");
+        }
+    }
+
+    public Integer loadUSCensusData (String csvFilePath) throws StateCensusException {
+        try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
+            ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
+            Iterator<CSVUSCensus> csvFileIterator = csvBuilder.getCSVfileIterator(reader,CSVUSCensus.class);
+            while (csvFileIterator.hasNext()) {
+                CSVUSCensus csvusCensus = csvFileIterator.next();
+                this.USCensusCSVMap.put(csvusCensus.stateId,csvusCensus);
+                USCensusList=USCensusCSVMap.values().stream().collect(Collectors.toList());
+            }
+            int numberOfRecords=USCensusCSVMap.size();
             return numberOfRecords;
         } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND, "File Not Found in Path");

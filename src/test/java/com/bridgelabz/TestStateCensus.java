@@ -13,6 +13,7 @@ public class TestStateCensus {
     public static String CSV_FILE_PATH_FOR_WRONG_FILE_EXTENSION = "./src/test/resources/StateCensus.jpg";
     public static String CSV_STATES_CODE_FILE_PATH = "./src/test/resources/StateCode.csv";
     public static String CSV_WRONG_STATES_CODE_FILE_PATH = "./src/test/resources/WrongStateCode.csv";
+    public static String US_CENSUS_CSV_FILE_PATH = "./src/test/resources/USCensusData.csv";
 
     @Test
     public void givenStateCensusCSV_WhenConditionTrue_ReturnNumberOfRecordMatch() {
@@ -216,4 +217,14 @@ public class TestStateCensus {
         }
     }
 
+    @Test
+    public void givenUSCensusCSV_WhenConditionTrue_ReturnNumberOfRecordMatch() {
+        int totalNumberOfRecords = 0;
+        try {
+            totalNumberOfRecords = censusAnalyser.loadUSCensusData(US_CENSUS_CSV_FILE_PATH);
+        } catch (StateCensusException e) {
+            e.printStackTrace();
+        }
+        Assert.assertEquals(51, totalNumberOfRecords);
+    }
 }

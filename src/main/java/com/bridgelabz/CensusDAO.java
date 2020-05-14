@@ -1,0 +1,27 @@
+package com.bridgelabz;
+
+public class CensusDAO {
+
+    public String stateCode;
+    public double populationDensity;
+    public double totalArea;
+    public int population;
+    public int densityPerSqKm;
+    public int areaInSqKm;
+    public String state;
+
+    public CensusDAO(CSVStateCensus indiaCensus) {
+        state=indiaCensus.state;
+        areaInSqKm=indiaCensus.areaInSqKm;
+        densityPerSqKm=indiaCensus.densityPerSqKm;
+        population= indiaCensus.population;
+    }
+
+    public CensusDAO(CSVUSCensus USCensus) {
+        state = USCensus.state;
+        population = USCensus.population;
+        totalArea = USCensus.totalArea;
+        populationDensity = USCensus.populationDensity;
+        stateCode = USCensus.stateId;
+    }
+}
