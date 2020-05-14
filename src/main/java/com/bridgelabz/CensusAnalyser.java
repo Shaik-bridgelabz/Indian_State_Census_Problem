@@ -15,7 +15,7 @@ public class CensusAnalyser<E> {
     public enum Country{ INDIA, US }
 
     public int loadCensusData(Country country,String... csvFilePath) throws StateCensusException {
-        csvFileMap= new CensusLoader().loadCensusData(country,csvFilePath);
+        csvFileMap=new CensusAdapterFactory().censusFactory(country,csvFilePath);
         return csvFileMap.size();
     }
 
@@ -66,7 +66,7 @@ public class CensusAnalyser<E> {
     }
 
     public String getPopulationWiseSortedCensusData(String csvFilePath) throws StateCensusException {
-        loadCensusData(Country.INDIA,csvFilePath);
+        loadCensusData(Country.INDIA,csvFilePath,csvFilePath);
         if (censusList == null || censusList.size() == 0) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_CENSUS_DATA, "NO_CENSUS_DATA");
         }
@@ -77,7 +77,7 @@ public class CensusAnalyser<E> {
     }
 
     public String getDensityWiseSortedCensusData(String csvFilePath) throws StateCensusException {
-        loadCensusData(Country.INDIA,csvFilePath);
+        loadCensusData(Country.INDIA,csvFilePath,csvFilePath);
         if (censusList == null || censusList.size() == 0) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_CENSUS_DATA, "NO_CENSUS_DATA");
         }
@@ -88,7 +88,7 @@ public class CensusAnalyser<E> {
     }
 
     public String getAreaWiseSortedCensusData(String csvFilePath) throws StateCensusException {
-        loadCensusData(Country.INDIA,csvFilePath);
+        loadCensusData(Country.INDIA,csvFilePath,csvFilePath);
         if (censusList == null || censusList.size() == 0) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_CENSUS_DATA, "NO_CENSUS_DATA");
         }

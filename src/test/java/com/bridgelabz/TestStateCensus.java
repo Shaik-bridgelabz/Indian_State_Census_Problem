@@ -19,7 +19,7 @@ public class TestStateCensus {
     public void givenStateCensusCSV_WhenConditionTrue_ReturnNumberOfRecordMatch() {
         int totalNumberOfRecords = 0;
         try {
-            totalNumberOfRecords = censusAnalyser.loadCensusData(CensusAnalyser.Country.INDIA,CSV_CENSUS_FILE_PATH);
+            totalNumberOfRecords = censusAnalyser.loadCensusData(CensusAnalyser.Country.INDIA,CSV_CENSUS_FILE_PATH,CSV_STATES_CODE_FILE_PATH);
         } catch (StateCensusException e) {
             e.printStackTrace();
         }
@@ -47,7 +47,7 @@ public class TestStateCensus {
     @Test
     public void givenStateCensusDataFile_WhenImproperDelimiter_ReturnsException() {
         try {
-            censusAnalyser.loadCensusData(CensusAnalyser.Country.INDIA,CSV_CENSUS_FILE_PATH);
+            censusAnalyser.loadCensusData(CensusAnalyser.Country.INDIA,CSV_CENSUS_FILE_PATH,CSV_STATES_CODE_FILE_PATH);
         } catch (StateCensusException e) {
             Assert.assertEquals(StateCensusException.TypeOfException.INCORRECT_DELIMITER_EXCEPTION,e.type);
         }
@@ -56,7 +56,7 @@ public class TestStateCensus {
     @Test
     public void givenStateCensusDataFile_WhenImproperHeader_ReturnsException() {
         try {
-            censusAnalyser.loadCensusData(CensusAnalyser.Country.INDIA,CSV_CENSUS_FILE_PATH);
+            censusAnalyser.loadCensusData(CensusAnalyser.Country.INDIA,CSV_CENSUS_FILE_PATH,CSV_STATES_CODE_FILE_PATH);
         } catch (StateCensusException e) {
             Assert.assertEquals(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION,e.type);
         }
@@ -112,7 +112,7 @@ public class TestStateCensus {
     @Test
     public void givenIndianCensusData_WhenSortedOnState_ShouldReturnSortedResult() {
         try {
-            censusAnalyser.loadCensusData(CensusAnalyser.Country.INDIA,CSV_CENSUS_FILE_PATH);
+            censusAnalyser.loadCensusData(CensusAnalyser.Country.INDIA,CSV_CENSUS_FILE_PATH,CSV_STATES_CODE_FILE_PATH);
             String sortedCensusData = censusAnalyser.getStateWiseSortedCensusData();
             CSVStateCensus[] censusCSV = new Gson().fromJson(sortedCensusData,CSVStateCensus[].class);
             Assert.assertEquals("Andhra Pradesh",censusCSV[0].state);
