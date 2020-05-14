@@ -66,11 +66,12 @@ public class TestStateCensus {
     public void givenStateCodeFile_WhenTrue_ReturnNumberOfRecordMatch() {
         Integer noOfRecords= null;
         try {
+            censusAnalyser.loadIndianStateCensusData(CSV_CENSUS_FILE_PATH);
             noOfRecords = censusAnalyser.loadIndianStateCodeData(CSV_STATES_CODE_FILE_PATH);
         } catch (StateCensusException e) {
             e.printStackTrace();
         }
-        Assert.assertEquals((Integer)37, noOfRecords);
+        Assert.assertEquals((Integer)29, noOfRecords);
     }
 
     @Test
@@ -127,7 +128,7 @@ public class TestStateCensus {
             censusAnalyser.loadIndianStateCodeData(CSV_STATES_CODE_FILE_PATH);
             String sortedStateCodeDataData = censusAnalyser.getStateCodeWiseSortedStateCodeData();
             CSVStateCode[] codeCSV = new Gson().fromJson(sortedStateCodeDataData,CSVStateCode[].class);
-            Assert.assertEquals("AD",codeCSV[0].StateCode);
+            Assert.assertEquals("AD",codeCSV[0].stateCode);
         } catch (StateCensusException e) {
             e.printStackTrace();
         }
@@ -139,7 +140,7 @@ public class TestStateCensus {
             censusAnalyser.loadIndianStateCodeData(CSV_STATES_CODE_FILE_PATH);
             String sortedStateCodeDataData = censusAnalyser.getStateCodeWiseSortedStateCodeData();
             CSVStateCode[] codeCSV = new Gson().fromJson(sortedStateCodeDataData,CSVStateCode[].class);
-            Assert.assertEquals("WB",codeCSV[36].StateCode);
+            Assert.assertEquals("WB",codeCSV[36].stateCode);
         } catch (StateCensusException e) {
             e.printStackTrace();
         }

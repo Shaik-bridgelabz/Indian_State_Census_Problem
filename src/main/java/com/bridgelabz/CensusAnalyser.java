@@ -18,13 +18,11 @@ public class CensusAnalyser<E> {
     List<CSVStateCode> codeCSVList=null;
     List<CSVUSCensus> USCensusList=null;
 
-    Map <String, CSVStateCensus> StateCensusCSVMap = null;
-    Map <String, CSVStateCode> StateCodeCSVMap = null;
+    Map<String, CensusDAO> csvFileMap = null;
     Map <String, CSVUSCensus> USCensusCSVMap = null;
 
     public CensusAnalyser() {
-        this.StateCensusCSVMap=new HashMap<>();
-        this.StateCodeCSVMap=new HashMap<>();
+        this.csvFileMap =new HashMap<String, CensusDAO>();
         this.USCensusCSVMap=new HashMap<>();
     }
 
@@ -32,13 +30,10 @@ public class CensusAnalyser<E> {
         try (Reader reader = newBufferedReader(Paths.get(filepath));) {
             ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
             Iterator<CSVStateCensus> csvFileIterator = csvBuilder.getCSVfileIterator(reader,CSVStateCensus.class);
-            while (csvFileIterator.hasNext()) {
-                CSVStateCensus csvStateCensus = csvFileIterator.next();
-                this.StateCensusCSVMap.put(csvStateCensus.state,csvStateCensus);
-                censusList=StateCensusCSVMap.values().stream().collect(Collectors.toList());
-            }
-            int numberOfRecords=StateCensusCSVMap.size();
-            return numberOfRecords;
+            Iterable<CSVStateCensus> csvIterable = () -> csvFileIterator;
+            StreamSupport.stream(csvIterable.spliterator(), false)
+                    .forEach(censusCSV -> csvFileMap.put(censusCSV.state,new CensusDAO(censusCSV)));
+            return csvFileMap.size();
         } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND,"File Not Found in Path");
         } catch (RuntimeException e) {
@@ -54,13 +49,11 @@ public class CensusAnalyser<E> {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
             ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
             Iterator<CSVStateCode> csvFileIterator = csvBuilder.getCSVfileIterator(reader,CSVStateCode.class);
-            while (csvFileIterator.hasNext()) {
-                CSVStateCode csvStateCode = csvFileIterator.next();
-                this.StateCodeCSVMap.put(csvStateCode.StateCode,csvStateCode);
-                codeCSVList=StateCodeCSVMap.values().stream().collect(Collectors.toList());
-            }
-            int numberOfRecords=StateCodeCSVMap.size();
-            return numberOfRecords;
+            Iterable<CSVStateCode> csvIterable = () -> csvFileIterator;
+            StreamSupport.stream(csvIterable.spliterator(), false)
+                    .filter(csvState -> csvFileMap.get(csvState.stateName) != null)
+                    .forEach(censusCSV -> csvFileMap.get(censusCSV.stateName).state = censusCSV.stateCode);
+            return csvFileMap.size();
         } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND, "File Not Found in Path");
         } catch (RuntimeException e) {
@@ -76,13 +69,10 @@ public class CensusAnalyser<E> {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
             ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
             Iterator<CSVUSCensus> csvFileIterator = csvBuilder.getCSVfileIterator(reader,CSVUSCensus.class);
-            while (csvFileIterator.hasNext()) {
-                CSVUSCensus csvusCensus = csvFileIterator.next();
-                this.USCensusCSVMap.put(csvusCensus.stateId,csvusCensus);
-                USCensusList=USCensusCSVMap.values().stream().collect(Collectors.toList());
-            }
-            int numberOfRecords=USCensusCSVMap.size();
-            return numberOfRecords;
+            Iterable<CSVUSCensus> csvIterable = () -> csvFileIterator;
+            StreamSupport.stream(csvIterable.spliterator(), false)
+                    .forEach(UScensusCSV -> csvFileMap.put(UScensusCSV.state,new CensusDAO(UScensusCSV)));
+            return csvFileMap.size();
         } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND, "File Not Found in Path");
         } catch (RuntimeException e) {
@@ -108,7 +98,7 @@ public class CensusAnalyser<E> {
         if (codeCSVList==null || codeCSVList.size()==0) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_CENSUS_DATA,"NO Data Found");
         }
-        Comparator<CSVStateCode> stateCodeComparator = Comparator.comparing(census -> census.StateCode);
+        Comparator<CSVStateCode> stateCodeComparator = Comparator.comparing(census -> census.stateCode);
         this.sortStateCode(stateCodeComparator);
         String sortedStateCensusJson = new Gson().toJson(this.codeCSVList);
         return sortedStateCensusJson;
