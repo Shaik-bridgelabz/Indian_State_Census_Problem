@@ -19,39 +19,9 @@ public class CensusAnalyser<E> {
 
     Map<String, CensusDAO> csvFileMap = null;
 
-    public CensusAnalyser() {
-        this.csvFileMap =new HashMap<String, CensusDAO>();
-    }
-
     public int loadIndianStateCensusData(String filePath) throws StateCensusException {
-        return this.loadCensusData(filePath,CSVStateCensus.class);
-
-    }
-
-    private <E> int loadCensusData(String filepath, Class<E> CensusCsvClass) throws StateCensusException {
-        try (Reader reader = newBufferedReader(Paths.get(filepath));) {
-            ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
-            Iterator<E> csvFileIterator = csvBuilder.getCSVfileIterator(reader,CensusCsvClass);
-            Iterable<E> csvIterable = () -> csvFileIterator;
-            if(CensusCsvClass.getName().equals("com.bridgelabz.CSVStateCensus")) {
-                StreamSupport.stream(csvIterable.spliterator(), false)
-                        .map(CSVStateCensus.class::cast)
-                        .forEach(censusCSV -> csvFileMap.put(censusCSV.state, new CensusDAO(censusCSV)));
-            } else if (CensusCsvClass.getName().equals("com.bridgelabz.CSVUSCensus")){
-                StreamSupport.stream(csvIterable.spliterator(), false)
-                        .map(CSVUSCensus.class::cast)
-                        .forEach(censusCSV -> csvFileMap.put(censusCSV.state, new CensusDAO(censusCSV)));
-            }
-            return csvFileMap.size();
-        } catch (NoSuchFileException e) {
-            throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND,"File Not Found in Path");
-        } catch (RuntimeException e) {
-            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION, "Header or Delimiter is not proper");
-        } catch (IOException e){
-            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_EXCEPTION,"File Not Proper");
-        } catch (CSVBuilderException e) {
-            throw new StateCensusException(e.getMessage(),e.type.name());
-        }
+        csvFileMap= new CensusLoader().loadCensusData(filePath,CSVStateCensus.class);
+        return csvFileMap.size();
     }
 
     public Integer loadIndianStateCodeData (String csvFilePath) throws StateCensusException {
@@ -75,7 +45,8 @@ public class CensusAnalyser<E> {
     }
 
     public int loadUSCensusData (String csvFilePath) throws StateCensusException {
-        return this.loadCensusData(csvFilePath,CSVUSCensus.class);
+        csvFileMap=new CensusLoader().loadCensusData(csvFilePath,CSVUSCensus.class);
+        return csvFileMap.size();
     }
 
     public String getStateWiseSortedCensusData() throws StateCensusException {
