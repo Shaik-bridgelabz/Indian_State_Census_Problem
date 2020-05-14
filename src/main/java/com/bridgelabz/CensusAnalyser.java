@@ -19,33 +19,13 @@ public class CensusAnalyser<E> {
 
     Map<String, CensusDAO> csvFileMap = null;
 
-    public int loadIndianStateCensusData(String filePath) throws StateCensusException {
-        csvFileMap= new CensusLoader().loadCensusData(filePath,CSVStateCensus.class);
+    public int loadIndianStateCensusData(String... csvFilePath) throws StateCensusException {
+        csvFileMap= new CensusLoader().loadCensusData(CSVStateCensus.class,csvFilePath);
         return csvFileMap.size();
     }
 
-    public Integer loadIndianStateCodeData (String csvFilePath) throws StateCensusException {
-        try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
-            ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
-            Iterator<CSVStateCode> csvFileIterator = csvBuilder.getCSVfileIterator(reader,CSVStateCode.class);
-            Iterable<CSVStateCode> csvIterable = () -> csvFileIterator;
-            StreamSupport.stream(csvIterable.spliterator(), false)
-                    .filter(csvState -> csvFileMap.get(csvState.stateName) != null)
-                    .forEach(censusCSV -> csvFileMap.get(censusCSV.stateName).state = censusCSV.stateCode);
-            return csvFileMap.size();
-        } catch (NoSuchFileException e) {
-            throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND, "File Not Found in Path");
-        } catch (RuntimeException e) {
-            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_HEADER_EXCEPTION, "Header or Delimiter is not proper");
-        } catch (CSVBuilderException e) {
-            throw new StateCensusException(e.getMessage(),e.type.name());
-        } catch (IOException e) {
-            throw new StateCensusException(StateCensusException.TypeOfException.INCORRECT_DELIMITER_EXCEPTION,"File Not Proper");
-        }
-    }
-
-    public int loadUSCensusData (String csvFilePath) throws StateCensusException {
-        csvFileMap=new CensusLoader().loadCensusData(csvFilePath,CSVUSCensus.class);
+    public int loadUSCensusData (String... csvFilePath) throws StateCensusException {
+        csvFileMap=new CensusLoader().loadCensusData(CSVUSCensus.class,csvFilePath);
         return csvFileMap.size();
     }
 
