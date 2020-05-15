@@ -18,13 +18,12 @@ public class TestStateCensus {
 
     @Test
     public void givenStateCensusCSV_WhenConditionTrue_ReturnNumberOfRecordMatch() {
-        int totalNumberOfRecords = 0;
         try {
-            totalNumberOfRecords = censusAnalyserIndia.loadCensusData(CSV_CENSUS_FILE_PATH,CSV_STATES_CODE_FILE_PATH);
+            int totalNumberOfRecords = censusAnalyserIndia.loadCensusData(CSV_CENSUS_FILE_PATH,CSV_STATES_CODE_FILE_PATH);
+            Assert.assertEquals(29, totalNumberOfRecords);
         } catch (StateCensusException e) {
             e.printStackTrace();
         }
-        Assert.assertEquals(29, totalNumberOfRecords);
     }
 
     @Test
@@ -65,13 +64,12 @@ public class TestStateCensus {
 
     @Test
     public void givenStateCodeFile_WhenTrue_ReturnNumberOfRecordMatch() {
-        Integer noOfRecords= null;
         try {
-            noOfRecords= censusAnalyserIndia.loadCensusData(CSV_CENSUS_FILE_PATH,CSV_STATES_CODE_FILE_PATH);
+            int noOfRecords= censusAnalyserIndia.loadCensusData(CSV_CENSUS_FILE_PATH,CSV_STATES_CODE_FILE_PATH);
+            Assert.assertEquals(29,noOfRecords);
         } catch (StateCensusException e) {
             e.printStackTrace();
         }
-        Assert.assertEquals((Integer)29, noOfRecords);
     }
 
     @Test
@@ -220,12 +218,59 @@ public class TestStateCensus {
 
     @Test
     public void givenUSCensusCSV_WhenConditionTrue_ReturnNumberOfRecordMatch() {
-        int totalNumberOfRecords = 0;
         try {
-            totalNumberOfRecords = censusAnalyserUS.loadCensusData(US_CENSUS_CSV_FILE_PATH);
+            int totalNumberOfRecords = censusAnalyserUS.loadCensusData(US_CENSUS_CSV_FILE_PATH);
+            Assert.assertEquals(51, totalNumberOfRecords);
         } catch (StateCensusException e) {
             e.printStackTrace();
         }
-        Assert.assertEquals(51, totalNumberOfRecords);
+    }
+
+    @Test
+    public void givenUSCensusData_WhenSortedOnState_ShouldReturnSortedResult() {
+        try {
+            censusAnalyserUS.loadCensusData(US_CENSUS_CSV_FILE_PATH);
+            String sortedCensusData = censusAnalyserUS.getStateWiseSortedCensusData();
+            CSVUSCensus[] censusCSV = new Gson().fromJson(sortedCensusData,CSVUSCensus[].class);
+            Assert.assertEquals("Wyoming",censusCSV[censusCSV.length-1].state);
+        } catch (StateCensusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void givenUSCensusData_WhenSortedOnPopulation_ShouldReturnSortedResult() {
+        try {
+            censusAnalyserUS.loadCensusData(US_CENSUS_CSV_FILE_PATH);
+            String sortedCensusData = censusAnalyserUS.getPopulationWiseSortedCensusData(US_CENSUS_CSV_FILE_PATH);
+            CSVUSCensus[] censusCSV = new Gson().fromJson(sortedCensusData,CSVUSCensus[].class);
+            Assert.assertEquals("California",censusCSV[censusCSV.length-1].state);
+        } catch (StateCensusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void givenUSCensusData_WhenSortedOnDensity_ShouldReturnSortedResult() {
+        try {
+            censusAnalyserUS.loadCensusData(US_CENSUS_CSV_FILE_PATH);
+            String sortedCensusData = censusAnalyserUS.getDensityWiseSortedCensusData(US_CENSUS_CSV_FILE_PATH);
+            CSVUSCensus[] censusCSV = new Gson().fromJson(sortedCensusData,CSVUSCensus[].class);
+            Assert.assertEquals("District of Columbia",censusCSV[censusCSV.length-1].state);
+        } catch (StateCensusException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void givenUSCensusData_WhenSortedOnArea_ShouldReturnSortedResult() {
+        try {
+            censusAnalyserUS.loadCensusData(US_CENSUS_CSV_FILE_PATH);
+            String sortedCensusData = censusAnalyserUS.getAreaWiseSortedCensusData(US_CENSUS_CSV_FILE_PATH);
+            CSVUSCensus[] censusCSV = new Gson().fromJson(sortedCensusData,CSVUSCensus[].class);
+            Assert.assertEquals("Alaska",censusCSV[censusCSV.length-1].state);
+        } catch (StateCensusException e) {
+            e.printStackTrace();
+        }
     }
 }

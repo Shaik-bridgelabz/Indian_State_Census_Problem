@@ -12,9 +12,13 @@ public class CensusAnalyser<E> {
     List<CSVStateCensus> censusList = null;
     List<CSVStateCode> codeCSVList=null;
 
-    Map<String, CensusDAO> csvFileMap = null;
+    Map<String, CensusDAO> csvFileMap;
     public enum Country{ INDIA, US }
     private Country country;
+
+    public CensusAnalyser() {
+        this.csvFileMap=new HashMap<String, CensusDAO>();
+    }
 
     public CensusAnalyser(Country country) {
         this.country=country;

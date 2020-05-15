@@ -22,7 +22,7 @@ public class IndiaCensusAdapter extends CensusAdapter {
         return censusStateMap;
     }
 
-    private Integer loadIndianStateCodeData(Map<String, CensusDAO> csvFileMap, String csvFilePath) throws StateCensusException {
+    private int loadIndianStateCodeData(Map<String, CensusDAO> csvFileMap, String csvFilePath) throws StateCensusException {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
             ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
             Iterator<CSVStateCode> csvFileIterator = csvBuilder.getCSVfileIterator(reader,CSVStateCode.class);
@@ -30,7 +30,7 @@ public class IndiaCensusAdapter extends CensusAdapter {
             StreamSupport.stream(csvIterable.spliterator(), false)
                          .filter(csvState -> this.censusStateMap.get(csvState.state) != null)
                          .forEach(censusCSV -> this.censusStateMap.get(censusCSV.state).state = censusCSV.stateCode);
-            return csvFileMap.size();
+            return this.censusStateMap.size();
         } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND, "File Not Found in Path");
         } catch (RuntimeException e) {

@@ -1,6 +1,6 @@
 package com.bridgelabz;
 
-public class StateCensusException extends Throwable {
+public class StateCensusException extends Exception {
 
     public enum TypeOfException {
         NO_FILE_FOUND,
