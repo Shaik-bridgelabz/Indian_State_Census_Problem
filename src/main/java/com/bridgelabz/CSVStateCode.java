@@ -7,8 +7,8 @@ public class CSVStateCode {
     @CsvBindByName(column = "SrNo", required = true)
     public String srNo;
 
-    @CsvBindByName(column = "stateName", required = true)
-    public String stateName;
+    @CsvBindByName(column = "StateName", required = true)
+    public String state;
 
     @CsvBindByName(column = "TIN", required = true)
     public int tin;
@@ -18,9 +18,9 @@ public class CSVStateCode {
 
     @Override
     public String toString() {
-        return "IndiaStateCodeCSV{" +
+        return "CSVStateCode{" +
                 "srNo='" + srNo + '\'' +
-                ", stateName=" + stateName +
+                ", stateName=" + state +
                 ", tin=" + tin +
                 ", stateCode=" + stateCode +
                 '}';

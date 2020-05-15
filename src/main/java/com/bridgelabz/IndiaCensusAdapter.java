@@ -14,6 +14,7 @@ import static java.nio.file.Files.newBufferedReader;
 public class IndiaCensusAdapter extends CensusAdapter {
 
     Map<String,CensusDAO> censusStateMap=new HashMap<>();
+
     @Override
     public Map<String, CensusDAO> loadCensusData(String... csvFilePath) throws StateCensusException {
         Map<String, CensusDAO> censusStateMap = super.loadCensusData(CSVStateCensus.class, csvFilePath[0]);
@@ -27,8 +28,8 @@ public class IndiaCensusAdapter extends CensusAdapter {
             Iterator<CSVStateCode> csvFileIterator = csvBuilder.getCSVfileIterator(reader,CSVStateCode.class);
             Iterable<CSVStateCode> csvIterable = () -> csvFileIterator;
             StreamSupport.stream(csvIterable.spliterator(), false)
-                         .filter(csvState -> csvFileMap.get(csvState.stateName) != null)
-                         .forEach(censusCSV -> csvFileMap.get(censusCSV.stateName).state = censusCSV.stateCode);
+                         .filter(csvState -> this.censusStateMap.get(csvState.state) != null)
+                         .forEach(censusCSV -> this.censusStateMap.get(censusCSV.state).state = censusCSV.stateCode);
             return csvFileMap.size();
         } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND, "File Not Found in Path");

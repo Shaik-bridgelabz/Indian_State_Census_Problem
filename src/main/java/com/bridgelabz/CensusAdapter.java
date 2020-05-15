@@ -12,19 +12,20 @@ import java.util.stream.StreamSupport;
 import static java.nio.file.Files.newBufferedReader;
 
 public abstract class CensusAdapter {
+
     public abstract Map<String, CensusDAO> loadCensusData(String... csvFilePath) throws StateCensusException;
 
-    public <E> Map<String, CensusDAO> loadCensusData(Class<E> CensusCsvClass, String csvFilePath) throws StateCensusException {
+    public <E> Map<String,CensusDAO> loadCensusData(Class<E> CensusCsvClass, String csvFilePath) throws StateCensusException {
         Map<String,CensusDAO> csvFileMap = new HashMap<>();
         try (Reader reader = newBufferedReader(Paths.get(csvFilePath));) {
             ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
             Iterator<E> csvFileIterator = csvBuilder.getCSVfileIterator(reader,CensusCsvClass);
             Iterable<E> csvIterable = () -> csvFileIterator;
-            if(CensusCsvClass.getName().equals("com.bridgelabz.CSVStateCensus")) {
+            if(CensusCsvClass.getName().equals("class com.bridgelabz.CSVStateCensus")) {
                 StreamSupport.stream(csvIterable.spliterator(), false)
                         .map(CSVStateCensus.class::cast)
                         .forEach(censusCSV -> csvFileMap.put(censusCSV.state, new CensusDAO(censusCSV)));
-            } else if (CensusCsvClass.getName().equals("com.bridgelabz.CSVUSCensus")){
+            } else if (CensusCsvClass.getName().equals("class com.bridgelabz.CSVUSCensus")){
                 StreamSupport.stream(csvIterable.spliterator(), false)
                         .map(CSVUSCensus.class::cast)
                         .forEach(censusCSV -> csvFileMap.put(censusCSV.state, new CensusDAO(censusCSV)));

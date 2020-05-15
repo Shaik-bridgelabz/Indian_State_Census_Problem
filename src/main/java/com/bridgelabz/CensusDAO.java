@@ -24,4 +24,15 @@ public class CensusDAO {
         populationDensity = USCensus.populationDensity;
         stateCode = USCensus.stateId;
     }
+
+    public CSVStateCensus getCSVStateCensus() {
+        return new CSVStateCensus(state, (int) population, (int) populationDensity, (int) totalArea);
+    }
+
+    public Object getCensusDTO(CensusAnalyser.Country country) {
+        if (country.equals(CensusAnalyser.Country.US))
+            return new CSVUSCensus(state, stateCode, population, populationDensity, totalArea);
+        return new CSVStateCensus(state, (int) population, (int) populationDensity, (int) totalArea);
+    }
+
 }
