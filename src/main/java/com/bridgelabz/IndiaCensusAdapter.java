@@ -13,8 +13,6 @@ import static java.nio.file.Files.newBufferedReader;
 
 public class IndiaCensusAdapter extends CensusAdapter {
 
-    Map<String,CensusDAO> censusStateMap=new HashMap<>();
-
     @Override
     public Map<String, CensusDAO> loadCensusData(String... csvFilePath) throws StateCensusException {
         Map<String, CensusDAO> censusStateMap = super.loadCensusData(CSVStateCensus.class, csvFilePath[0]);
@@ -22,15 +20,15 @@ public class IndiaCensusAdapter extends CensusAdapter {
         return censusStateMap;
     }
 
-    private int loadIndianStateCodeData(Map<String, CensusDAO> csvFileMap, String csvFilePath) throws StateCensusException {
+    private Map<String, CensusDAO> loadIndianStateCodeData(Map<String, CensusDAO> censusStateMap, String csvFilePath) throws StateCensusException {
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
             ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
             Iterator<CSVStateCode> csvFileIterator = csvBuilder.getCSVfileIterator(reader,CSVStateCode.class);
             Iterable<CSVStateCode> csvIterable = () -> csvFileIterator;
             StreamSupport.stream(csvIterable.spliterator(), false)
-                         .filter(csvState -> this.censusStateMap.get(csvState.state) != null)
-                         .forEach(censusCSV -> this.censusStateMap.get(censusCSV.state).state = censusCSV.stateCode);
-            return this.censusStateMap.size();
+                         .filter(csvState -> censusStateMap.get(csvState.state) != null)
+                         .forEach(csvState -> censusStateMap.get(csvState.state).stateCode = csvState.stateCode);
+            return censusStateMap;
         } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND, "File Not Found in Path");
         } catch (RuntimeException e) {

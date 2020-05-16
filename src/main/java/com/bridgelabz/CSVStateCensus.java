@@ -19,8 +19,8 @@ public class CSVStateCensus {
     public CSVStateCensus(String state, int population, int populationDensity, int totalArea) {
         this.state = state;
         this.population = (int) population;
-        this.areaInSqKm = areaInSqKm;
-        this.densityPerSqKm =(int) densityPerSqKm;
+        this.areaInSqKm = totalArea;
+        this.densityPerSqKm =(int) populationDensity;
     }
 
     @Override

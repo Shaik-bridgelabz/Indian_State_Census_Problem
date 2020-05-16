@@ -14,25 +14,24 @@ import static java.nio.file.Files.newBufferedReader;
 
 public abstract class CensusAdapter {
 
-    Map<String,CensusDAO> csvFileMap = new HashMap<>();
-
     public abstract Map<String, CensusDAO> loadCensusData(String... csvFilePath) throws StateCensusException;
 
-    public <E> Map<String,CensusDAO> loadCensusData(Class<E> CensusCsvClass, String csvFilePath) throws StateCensusException {
+    public <E> Map<String,CensusDAO> loadCensusData(Class<E> censusCsvClass, String csvFilePath) throws StateCensusException {
+        Map<String,CensusDAO> censusStateMap = new HashMap<>();
         try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
             ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
-            Iterator<E> csvFileIterator = csvBuilder.getCSVfileIterator(reader,CensusCsvClass);
+            Iterator<E> csvFileIterator = csvBuilder.getCSVfileIterator(reader,censusCsvClass);
             Iterable<E> csvIterable = () -> csvFileIterator;
-            if(CensusCsvClass.getName().equals("com.bridgelabz.CSVStateCensus")) {
+            if(censusCsvClass.getName().contains("CSVStateCensus")) {
                 StreamSupport.stream(csvIterable.spliterator(), false)
                         .map(CSVStateCensus.class::cast)
-                        .forEach(censusCSV -> csvFileMap.put(censusCSV.state, new CensusDAO(censusCSV)));
-            } else if (CensusCsvClass.getName().equals("com.bridgelabz.CSVUSCensus")){
+                        .forEach(censusCSV -> censusStateMap.put(censusCSV.state, new CensusDAO(censusCSV)));
+            } else if (censusCsvClass.getName().contains("CSVUSCensus")){
                 StreamSupport.stream(csvIterable.spliterator(), false)
                         .map(CSVUSCensus.class::cast)
-                        .forEach(censusCSV -> csvFileMap.put(censusCSV.state, new CensusDAO(censusCSV)));
+                        .forEach(censusCSV -> censusStateMap.put(censusCSV.state, new CensusDAO(censusCSV)));
             }
-            return csvFileMap;
+            return censusStateMap;
         } catch (NoSuchFileException e) {
             throw new StateCensusException(StateCensusException.TypeOfException.NO_FILE_FOUND,"File Not Found in Path");
         } catch (RuntimeException e) {
